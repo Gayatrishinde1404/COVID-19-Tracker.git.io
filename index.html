@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./covid.css" />
+    <link rel="icon" type="image/png" href="./covid.png" />
+    <title></title>
+</head>
+
+<body>
+    <div class="container">
+        <h1>COVID-19 TRACKER</h1>
+        <input type="text" id="inputElement" placeholder="Enter country name" />
+        <button class="btn" id="search">Get Data</button>
+        <br /><br />
+        <div id="container">
+            <div class="activeCasesDiv">
+                <img src="https://img.icons8.com/ios-filled/50/000000/speed.png" />
+                <br />
+                Active Cases
+                <h3 class="activeCases"></h3>
+            </div>
+            <div class="newCasesDiv">
+                <img src="https://img.icons8.com/external-flatart-icons-lineal-color-flatarticons/64/000000/external-plus-user-interface-flatart-icons-lineal-color-flatarticons.png" />
+                <br />
+                New Cases
+                <h3 class="newCases"></h3>
+            </div>
+            <div class="recoveredCasesDiv">
+                <img src="https://img.icons8.com/external-flatart-icons-lineal-color-flatarticons/64/000000/external-tick-user-interface-flatart-icons-lineal-color-flatarticons.png" />
+                <br />
+                Recovered Cases
+                <h3 class="recoveredCases"></h3>
+            </div>
+        </div>
+        <br />
+        <div id="container">
+            <div class="totalCasesDiv">
+                <img src="https://img.icons8.com/ios-glyphs/30/000000/menu--v1.png" /><br />
+                Total Cases
+                <h3 class="totalCases"></h3>
+            </div>
+            <div class="totalDeathsDiv">
+                <img src="https://img.icons8.com/external-justicon-lineal-color-justicon/64/000000/external-death-funeral-justicon-lineal-color-justicon.png" /><br />
+                Total Deaths
+                <h3 class="totalDeaths"></h3>
+            </div>
+            <div class="totalTestsDiv">
+                <img src="https://img.icons8.com/color/48/000000/pcr-test--v1.png" />
+                <br />
+                Total Tests
+                <h3 class="totalTests"></h3>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script>
+    const btn = document.querySelector('#search');
+    btn.addEventListener('click', async function () {
+        const inputElement = document.querySelector('#inputElement').value;
+
+        
+        const url = `https://covid-193.p.rapidapi.com/statistics?country=${inputElement}`;
+        const options = {
+            method: 'GET',
+            headers: {
+                'x-rapidapi-key': 'baa1b604bamsh30c2077d05f56c1p1b4b9ajsn1c110e1b4e35',
+                'x-rapidapi-host': 'covid-193.p.rapidapi.com'
+            }
+        };
+
+        try {
+            const response = await fetch(url, options);
+            const result = await response.json();
+
+            console.log('Full API response:', result); 
+
+            if (result.response && result.response.length > 0) {
+                const data = result.response[0];
+
+                console.log('Country data:', data); 
+
+                
+                document.querySelector('.activeCases').textContent = data.cases.active || "Data not available";
+                document.querySelector('.newCases').textContent = data.cases.new || "Data not available";
+                document.querySelector('.recoveredCases').textContent = data.cases.recovered || "Data not available";
+                document.querySelector('.totalCases').textContent = data.cases.total || "Data not available";
+                document.querySelector('.totalDeaths').textContent = data.deaths.total || "Data not available";
+                document.querySelector('.totalTests').textContent = data.tests.total || "Data not available";
+            } else {
+                alert('No data found for the specified country.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred while fetching the data.');
+        }
+    });
+</script>
+
+</html>
